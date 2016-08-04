@@ -101,6 +101,10 @@ class XMPP {
             React.NativeModules.RNXMPP.disconnect();
         }
     }
+
+    editProfile(params, avatar) {
+        RNXMPP.editProfile(params, avatar);
+    }
 }
 
 module.exports = new XMPP();
