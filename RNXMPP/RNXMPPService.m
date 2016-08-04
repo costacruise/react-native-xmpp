@@ -5,6 +5,7 @@
 #import "XMPPLogging.h"
 #import "XMPPReconnect.h"
 #import "XMPPUser.h"
+#import "XMPPvCardTemp.h"
 #import "DDLog.h"
 #import "DDTTYLogger.h"
 #import <CFNetwork/CFNetwork.h>
@@ -117,10 +118,10 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     // The vCard Avatar module works in conjuction with the standard vCard Temp module to download user avatars.
     // The XMPPRoster will automatically integrate with XMPPvCardAvatarModule to cache roster photos in the roster.
 
-//    xmppvCardStorage = [XMPPvCardCoreDataStorage sharedInstance];
-//    xmppvCardTempModule = [[XMPPvCardTempModule alloc] initWithvCardStorage:xmppvCardStorage];
+    //    xmppvCardStorage = [XMPPvCardCoreDataStorage sharedInstance];
+    //    xmppvCardTempModule = [[XMPPvCardTempModule alloc] initWithvCardStorage:xmppvCardStorage];
 //
-//    xmppvCardAvatarModule = [[XMPPvCardAvatarModule alloc] initWithvCardTempModule:xmppvCardTempModule];
+    //    xmppvCardAvatarModule = [[XMPPvCardAvatarModule alloc] initWithvCardTempModule:xmppvCardTempModule];
 
     // Setup capabilities
     //
@@ -141,26 +142,26 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     // The XMPPCapabilitiesCoreDataStorage is an ideal solution.
     // It can also be shared amongst multiple streams to further reduce hash lookups.
 
-//    xmppCapabilitiesStorage = [XMPPCapabilitiesCoreDataStorage sharedInstance];
-//    xmppCapabilities = [[XMPPCapabilities alloc] initWithCapabilitiesStorage:xmppCapabilitiesStorage];
-//
-//    xmppCapabilities.autoFetchHashedCapabilities = YES;
-//    xmppCapabilities.autoFetchNonHashedCapabilities = NO;
+    //    xmppCapabilitiesStorage = [XMPPCapabilitiesCoreDataStorage sharedInstance];
+    //    xmppCapabilities = [[XMPPCapabilities alloc] initWithCapabilitiesStorage:xmppCapabilitiesStorage];
+    //
+    //    xmppCapabilities.autoFetchHashedCapabilities = YES;
+    //    xmppCapabilities.autoFetchNonHashedCapabilities = NO;
 
     // Activate xmpp modules
 
     [xmppReconnect         activate:xmppStream];
     [xmppRoster            activate:xmppStream];
     [xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
-//    [xmppvCardTempModule   activate:xmppStream];
-//    [xmppvCardAvatarModule activate:xmppStream];
-//    [xmppCapabilities      activate:xmppStream];
-//
+    //    [xmppvCardTempModule   activate:xmppStream];
+    //    [xmppvCardAvatarModule activate:xmppStream];
+    //    [xmppCapabilities      activate:xmppStream];
+    //
 
 
-//    xmppMUC = [[XMPPMUC alloc] init];
-//    [xmppMUC activate:xmppStream];
-//    [xmppMUC addDelegate:self delegateQueue:dispatch_get_main_queue()];
+    //    xmppMUC = [[XMPPMUC alloc] init];
+    //    [xmppMUC activate:xmppStream];
+    //    [xmppMUC addDelegate:self delegateQueue:dispatch_get_main_queue()];
 
     // Add ourself as a delegate to anything we may be interested in
 
@@ -177,8 +178,8 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     //
     // If you don't specify a hostPort, then the default (5222) will be used.
 
-    //	[xmppStream setHostName:@"talk.google.com"];
-    //	[xmppStream setHostPort:5222];
+    //  [xmppStream setHostName:@"talk.google.com"];
+    //  [xmppStream setHostPort:5222];
 
 
     // You may need to alter these settings depending on the server you're connecting to
@@ -261,7 +262,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     username = myJID;
     password = myPassword;
     authMethod = auth;
-    
+
     xmppStream.hostName = (hostname ? hostname : [username componentsSeparatedByString:@"@"][1]);
     if(port){
         xmppStream.hostPort = port;
@@ -356,7 +357,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     // The delegate method should likely have code similar to this,
     // but will presumably perform some extra security code stuff.
     // For example, allowing a specific self-signed certificate that is known to the app.
-    
+
     if ([trustedHosts containsObject:xmppStream.hostName]) {
         completionHandler(YES);
     }
@@ -462,13 +463,13 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 }
 
 - (void)xmppRoster:(XMPPRosterMemoryStorage *)sender
-    didRemoveResource:(XMPPResourceMemoryStorageObject *)resource withUser:(XMPPUserMemoryStorageObject *)user {
+ didRemoveResource:(XMPPResourceMemoryStorageObject *)resource withUser:(XMPPUserMemoryStorageObject *)user {
 
     DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
 }
 
 - (void)xmppRoster:(XMPPRosterMemoryStorage *)sender
-    didUpdateResource:(XMPPResourceMemoryStorageObject *)resource withUser:(XMPPUserMemoryStorageObject *)user {
+ didUpdateResource:(XMPPResourceMemoryStorageObject *)resource withUser:(XMPPUserMemoryStorageObject *)user {
 
     DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
 }
@@ -523,11 +524,11 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     NSXMLElement *msg = [NSXMLElement elementWithName:@"message"];
     [msg addAttributeWithName:@"type" stringValue:@"chat"];
     [msg addAttributeWithName:@"to" stringValue: to];
-    
+
     if (thread != nil) {
         [msg addChild:[NSXMLElement elementWithName:@"thread" stringValue:thread]];
     }
-    
+
     [msg addChild:body];
     [xmppStream sendElement:msg];
 }
@@ -555,6 +556,26 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 -(void)fetchRoster {
     [xmppRoster fetchRoster];
+}
+
+- (void)editProfile:(NSDictionary *)params avatar:(NSString *)avatar{
+
+    NSXMLElement *vCardXML = [NSXMLElement elementWithName:@"vCard" xmlns:@"vcard-temp"];
+    XMPPvCardTemp *newvCardTemp = [XMPPvCardTemp vCardTempFromElement:vCardXML];
+
+    //Set params
+    for(NSString *key in params.allKeys){
+        [newvCardTemp setValue:[params objectForKey:key] forKey:key];
+    }
+
+    //Set avatar image
+    if (avatar){
+        NSData *avatarData = [[NSData alloc]initWithBase64EncodedString:avatar options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        [newvCardTemp setPhoto:avatarData];
+    }
+
+    XMPPIQ *iq = [XMPPIQ iqWithType:@"set" to:nil elementID:[xmppStream generateUUID] child:newvCardTemp];
+    [xmppStream sendElement:iq];
 }
 
 @end
