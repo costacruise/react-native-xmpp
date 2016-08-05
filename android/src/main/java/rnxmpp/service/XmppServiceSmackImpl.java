@@ -1,6 +1,8 @@
 package rnxmpp.service;
 
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -22,6 +24,8 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterLoadedListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -217,4 +221,28 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
     }
 
+    @Override
+    public void editProfile(final ReadableMap params, String avatar){
+        VCard vCard = new VCard();
+
+        ReadableMapKeySetIterator iterator = params.keySetIterator();
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+            String value = params.getString(key);
+            vCard.setField(key.toUpperCase(), value);
+        }
+
+
+        if(avatar != null){
+            vCard.setAvatar(avatar, "image/jpeg");
+        }
+
+
+        try {
+            VCardManager vCardManager = VCardManager.getInstanceFor(connection);
+            vCardManager.saveVCard(vCard);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not save profile", e);
+        }
+    }
 }
