@@ -78,7 +78,7 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
                 .setUsernameAndPassword(jidParts[0], password)
                 .setConnectTimeout(3000)
                 //.setDebuggerEnabled(true)
-                .setSecurityMode(ConnectionConfiguration.SecurityMode.required);
+                .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
 
         if (serviceNameParts.length>1){
             confBuilder.setResource(serviceNameParts[1]);
