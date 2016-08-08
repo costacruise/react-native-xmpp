@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -29,10 +30,12 @@ import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,7 +78,7 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
                 .setUsernameAndPassword(jidParts[0], password)
                 .setConnectTimeout(3000)
                 //.setDebuggerEnabled(true)
-                .setSecurityMode(ConnectionConfiguration.SecurityMode.required);
+                .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
 
         if (serviceNameParts.length>1){
             confBuilder.setResource(serviceNameParts[1]);
@@ -100,6 +103,8 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
         ChatManager.getInstanceFor(connection).addChatListener(this);
         roster = Roster.getInstanceFor(connection);
         roster.addRosterLoadedListener(this);
+
+        supportSASLMechanism(authMethod);
 
         try {
             connection.connect();
@@ -126,6 +131,18 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
 
             }
         }.execute();
+    }
+
+    private void supportSASLMechanism(@Nullable String mechanism){
+        if(mechanism == null){
+            mechanism = "PLAIN";
+        }
+        Map<String, String> mechanisms = SASLAuthentication.getRegisterdSASLMechanisms();
+        for (String registeredMechanism : mechanisms.values()) {
+            if(!mechanism.equals(registeredMechanism)){
+                SASLAuthentication.blacklistSASLMechanism(registeredMechanism);
+            }
+        }
     }
 
     @Override
