@@ -74,7 +74,7 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
                 .setServiceName(serviceName)
                 .setUsernameAndPassword(jidParts[0], password)
                 .setConnectTimeout(3000)
-                        //.setDebuggerEnabled(true)
+                //.setDebuggerEnabled(true)
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.required);
 
         if (serviceNameParts.length>1){
@@ -277,11 +277,9 @@ public class XmppServiceSmackImpl implements XmppService, ChatManagerListener, S
             vCard.setField(key.toUpperCase(), value);
         }
 
-
         if(avatar != null){
             vCard.setAvatar(avatar, "image/jpeg");
         }
-
 
         try {
             VCardManager vCardManager = VCardManager.getInstanceFor(connection);
