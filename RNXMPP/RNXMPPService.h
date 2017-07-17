@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "XMPP.h"
-#import "XMPPStreamManagementMemoryStorage.h"
+// #import "XMPPStreamManagementMemoryStorage.h"
 #import "XMPPReconnect.h"
 #import "XMPPDateTimeProfiles.h"
 #import "NSDate+XMPPDateTimeProfiles.h"
@@ -49,8 +49,8 @@
 
 @property (nonatomic, strong, readonly) XMPPStream *xmppStream;
 @property (nonatomic, strong, readonly) XMPPReconnect *xmppReconnect;
-@property (nonatomic, strong, readonly) XMPPStreamManagementMemoryStorage *xmppStreamStorage;
-@property (nonatomic, strong, readonly) XMPPStreamManagement *xmppStreamMgt;
+// @property (nonatomic, strong, readonly) XMPPStreamManagementMemoryStorage *xmppStreamStorage;
+// @property (nonatomic, strong, readonly) XMPPStreamManagement *xmppStreamMgt;
 @property (nonatomic, strong, readonly) XMPPAutoPing *xmppAutoPing;
 @property (nonatomic, weak) id<RNXMPPServiceDelegate> delegate;
 
@@ -62,4 +62,3 @@
 -(void)sendStanza:(NSString *)stanza;
 
 @end
-
