@@ -42,7 +42,3 @@
 
 #import "XMPPMUC.h"
 #import "XMPPRoomCoreDataStorage.h"
-
-// // xep-0198
-// #import "XMPPStreamManagement.h"
-// #import "XMPPStreamManagementMemoryStorage.h"

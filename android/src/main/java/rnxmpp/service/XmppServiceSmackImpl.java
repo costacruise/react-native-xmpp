@@ -84,10 +84,6 @@ public class XmppServiceSmackImpl implements XmppService, StanzaListener, Connec
             confBuilder.setCustomSSLContext(UnsafeSSLContext.INSTANCE.getContext());
         }
         XMPPTCPConnectionConfiguration connectionConfiguration = confBuilder.build();
-        // XEP-0198 Stream Management seems to cause issues with hanging
-        // connections on Android when the App is terminated.
-        // XMPPTCPConnection.setUseStreamManagementDefault(true);
-        // XMPPTCPConnection.setUseStreamManagementResumptionDefault(true);
         connection = new XMPPTCPConnection(connectionConfiguration);
 
         // Disable automatic roster request
