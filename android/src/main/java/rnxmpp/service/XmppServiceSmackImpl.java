@@ -84,8 +84,6 @@ public class XmppServiceSmackImpl implements XmppService, StanzaListener, Connec
             confBuilder.setCustomSSLContext(UnsafeSSLContext.INSTANCE.getContext());
         }
         XMPPTCPConnectionConfiguration connectionConfiguration = confBuilder.build();
-        XMPPTCPConnection.setUseStreamManagementDefault(true);
-        XMPPTCPConnection.setUseStreamManagementResumptionDefault(true);
         connection = new XMPPTCPConnection(connectionConfiguration);
 
         // Disable automatic roster request
