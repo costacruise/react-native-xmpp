@@ -1,6 +1,6 @@
 {
   "name": "react-native-basic-xmpp",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Fork of XMPP Library for React Native",
   "main": "index.js",
   "scripts": {
